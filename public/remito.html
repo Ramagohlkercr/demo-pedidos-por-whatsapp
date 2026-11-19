@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8">
+  <title>Remito y Orden de Preparación</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      background: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 24px;
+      color: #0f172a;
+    }
+    .remito-container {
+      background: white;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 36px 40px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+    .remito-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+    .remito-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .remito-meta {
+      text-align: right;
+      font-size: 0.9rem;
+      color: #475569;
+    }
+    .client-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      font-size: 0.92rem;
+    }
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+    }
+    .items-table th, .items-table td {
+      border: 1px solid #cbd5e1;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+    }
+    .items-table th {
+      background: #f1f5f9;
+      font-weight: 800;
+      text-align: left;
+    }
+    .checkbox-col {
+      width: 44px;
+      text-align: center;
+    }
+    .checkbox-box {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #94a3b8;
+      display: inline-block;
+      border-radius: 4px;
+    }
+    .signatures-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 60px;
+      padding-top: 20px;
+    }
+    .signature-box {
+      width: 45%;
+      border-top: 1.5px dashed #64748b;
+      text-align: center;
+      padding-top: 8px;
+      font-size: 0.85rem;
+      color: #475569;
+    }
+    .no-print-bar {
+      max-width: 800px;
+      margin: 0 auto 16px;
+      display: flex;
+      justify-content: space-between;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .remito-container { border: none; box-shadow: none; padding: 10px; max-width: 100%; }
+      .no-print-bar { display: none !important; }
+      .icon, i[data-lucide], svg.lucide {
+        stroke: #000000 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="no-print-bar">
+    <button onclick="window.close()" class="btn btn-outline with-icon">
+      <i data-lucide="arrow-left" class="icon-sm"></i>
+      <span>Cerrar</span>
+    </button>
+    <button onclick="window.print()" class="btn btn-primary with-icon">
+      <i data-lucide="printer" class="icon-sm"></i>
+      <span>Imprimir Remito (A4)</span>
+    </button>
+  </div>
+
+  <article class="remito-container" id="remitoContent">
+    <div style="text-align: center; padding: 40px; color: #64748b;">
+      Cargando datos del remito...
+    </div>
+  </article>
+
+  <script>
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParts = window.location.pathname.split('/');
+      const orderId = urlParts[urlParts.indexOf('orders') + 1];
+
+      try {
+        const [configRes, ordersRes] = await Promise.all([
+          fetch('/api/config').then(r => r.json()),
+          fetch('/api/admin/orders').then(r => r.json())
+        ]);
+
+        const order = (ordersRes.orders || []).find(o => o.id == orderId);
+        if (!order) {
+          document.getElementById('remitoContent').innerHTML = '<p style="color:red;">Pedido no encontrado.</p>';
+          return;
+        }
+
+        const date = new Date(order.created_at).toLocaleString('es-AR', {
+          day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+
+        const rows = (order.items || []).map((item, idx) => `
+          <tr>
+            <td class="checkbox-col"><span class="checkbox-box"></span></td>
+            <td><strong>${escapeHtml(item.product_name)}</strong></td>
+            <td style="text-align: center; font-weight: 700;">${escapeHtml(item.quantity)} ${escapeHtml(item.unit)}</td>
+            <td style="text-align: right;">${escapeHtml(item.unitPriceFormatted)}</td>
+            <td style="text-align: right; font-weight: 800;">${escapeHtml(item.subtotalFormatted)}</td>
+          </tr>
+        `).join('');
+
+        const deliveryTypeLabel = order.delivery_type === 'envio' 
+          ? '<span class="with-icon"><i data-lucide="truck" class="icon-sm"></i> <span>Envío a domicilio / obra</span></span>' 
+          : '<span class="with-icon"><i data-lucide="store" class="icon-sm"></i> <span>Retiro en local</span></span>';
+
+        document.getElementById('remitoContent').innerHTML = `
+          <div class="remito-header">
+            <div>
+              <div style="font-size: 1.4rem; font-weight: 800; color: #f97316;">${escapeHtml(configRes.storeName)}</div>
+              <p style="font-size: 0.85rem; color: #64748b;">${escapeHtml(configRes.storeTagline)}</p>
+              <p style="font-size: 0.82rem; color: #64748b; margin-top: 2px;">WhatsApp Local: +${escapeHtml(configRes.whatsappPhone)}</p>
+            </div>
+            <div class="remito-meta">
+              <div class="remito-title">ORDEN DE PREPARACIÓN / REMITO</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 4px 0;">#${escapeHtml(order.order_number)}</div>
+              <p>Fecha: ${escapeHtml(date)}</p>
+              <p style="font-weight: 700; color: #16a34a;">Estado: ${escapeHtml(order.status)}</p>
+            </div>
+          </div>
+
+          <div class="client-card">
+            <div>
+              <p><strong>Cliente:</strong> ${escapeHtml(order.customer_name)}</p>
+              <p><strong>Teléfono:</strong> ${escapeHtml(order.customer_phone)}</p>
+              <p><strong>Modalidad:</strong> ${deliveryTypeLabel}</p>
+            </div>
+            <div>
+              ${order.delivery_address ? `<p><strong>Dirección:</strong> ${escapeHtml(order.delivery_address)}</p>` : ''}
+              ${order.shipping_zone ? `<p><strong>Zona de flete:</strong> ${escapeHtml(order.shipping_zone)}</p>` : ''}
+              ${order.notes ? `<p style="background: #fef3c7; padding: 4px 8px; border-radius: 4px; margin-top: 4px;"><strong>Obs:</strong> ${escapeHtml(order.notes)}</p>` : ''}
+            </div>
+          </div>
+
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th class="checkbox-col">OK</th>
+                <th>Material</th>
+                <th style="text-align: center;">Cantidad</th>
+                <th style="text-align: right;">Precio Unit.</th>
+                <th style="text-align: right;">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows}
+            </tbody>
+          </table>
+
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 24px;">
+            <div style="min-width: 240px; font-size: 0.95rem; line-height: 1.6;">
+              ${order.shipping_cost > 0 ? `<div style="display: flex; justify-content: space-between;"><span>Flete:</span> <span>${escapeHtml(order.shipping_cost ? '$ ' + Math.round(order.shipping_cost).toLocaleString('es-AR') : '$ 0')}</span></div>` : ''}
+              <div style="display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: 800; border-top: 2px solid #0f172a; padding-top: 6px; margin-top: 4px;">
+                <span>TOTAL:</span>
+                <span>${escapeHtml(order.totalFormatted)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="signatures-row">
+            <div class="signature-box">
+              Preparado y cargado por (Depósito)
+            </div>
+            <div class="signature-box">
+              Recibí conforme (Firma y aclaración del cliente)
+            </div>
+          </div>
+        `;
+
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+          lucide.createIcons();
+        }
+      } catch (err) {
+        document.getElementById('remitoContent').innerHTML = '<p style="color:red;">Error al cargar datos.</p>';
+      }
+    });
+  </script>
+</body>
+</html>

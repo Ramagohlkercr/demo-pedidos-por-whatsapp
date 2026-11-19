@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Código QR del Catálogo - Mostrador</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      background: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 24px;
+      color: #0f172a;
+    }
+    .print-sheet {
+      background: white;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 48px 40px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      text-align: center;
+    }
+    .qr-header-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-md);
+      background: var(--primary-light);
+      margin-bottom: 12px;
+    }
+    .qr-store-name {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--secondary);
+      letter-spacing: -0.5px;
+    }
+    .qr-store-tagline {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      margin-bottom: 24px;
+    }
+    .qr-box {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 20px;
+      display: inline-block;
+      border: 3px solid var(--primary-border);
+      box-shadow: var(--shadow-sm);
+      margin: 10px 0 24px;
+    }
+    .qr-img {
+      width: 240px;
+      height: 240px;
+      display: block;
+    }
+    .qr-callout {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--secondary);
+      margin-bottom: 8px;
+    }
+    .qr-steps {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 28px auto;
+      max-width: 500px;
+      text-align: left;
+    }
+    .qr-step-item {
+      flex: 1;
+      background: #f8fafc;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      border: 1px solid var(--border);
+    }
+    .qr-step-num {
+      display: block;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+    .qr-web-url {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-top: 1px dashed var(--border-strong);
+      padding-top: 20px;
+      margin-top: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .no-print-bar {
+      max-width: 640px;
+      margin: 0 auto 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .no-print-bar {
+        display: none !important;
+      }
+      .print-sheet {
+        box-shadow: none;
+        border: none;
+        max-width: 100%;
+        padding: 20px;
+      }
+      .qr-img {
+        width: 300px;
+        height: 300px;
+      }
+      .icon, i[data-lucide], svg.lucide {
+        stroke: #000000 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de acciones (no se imprime) -->
+  <div class="no-print-bar">
+    <a href="/" class="btn btn-outline with-icon">
+      <i data-lucide="arrow-left" class="icon-sm"></i>
+      <span>Volver al catálogo</span>
+    </a>
+    <button onclick="window.print()" class="btn btn-primary with-icon" style="font-size: 1rem; padding: 12px 24px;">
+      <i data-lucide="printer" class="icon"></i>
+      <span>Imprimir Cartel (A4)</span>
+    </button>
+  </div>
+
+  <!-- Cartel Imprimible -->
+  <article class="print-sheet">
+    <div class="qr-header-logo">
+      <i data-lucide="building-2" class="icon-xl" style="width: 48px; height: 48px; color: var(--primary);"></i>
+    </div>
+    <h1 class="qr-store-name" id="qrStoreName">Corralón & Distribuidora Norte</h1>
+    <p class="qr-store-tagline" id="qrStoreTagline">Materiales de Construcción • Venta Mayorista y Minorista</p>
+
+    <div class="qr-box">
+      <img src="/api/qr.svg" alt="Código QR del Catálogo" class="qr-img">
+    </div>
+
+    <h2 class="qr-callout">¡Hacé tu pedido directo por WhatsApp!</h2>
+    <p style="font-size: 0.95rem; color: var(--text-muted); max-width: 440px; margin: 0 auto;">
+      Escaneá este código QR con la cámara de tu celular para armar tu lista de materiales desde la obra o el taller.
+    </p>
+
+    <div class="qr-steps">
+      <div class="qr-step-item">
+        <span class="qr-step-num">1. Escaneá</span>
+        Apuntá la cámara de tu teléfono al código QR.
+      </div>
+      <div class="qr-step-item">
+        <span class="qr-step-num">2. Elegí</span>
+        Seleccioná los materiales y cantidades que necesitás.
+      </div>
+      <div class="qr-step-item">
+        <span class="qr-step-num">3. Enviá</span>
+        El pedido se arma automáticamente en tu WhatsApp.
+      </div>
+    </div>
+
+    <div class="qr-web-url" id="qrUrlDisplay">
+      <i data-lucide="globe" class="icon-sm"></i>
+      <span>Catálogo web: <strong id="currentDomain">cargando...</strong></span>
+    </div>
+  </article>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      document.getElementById('currentDomain').textContent = window.location.origin;
+      try {
+        const res = await fetch('/api/config');
+        const data = await res.json();
+        if (data.storeName) document.getElementById('qrStoreName').textContent = data.storeName;
+        if (data.storeTagline) document.getElementById('qrStoreTagline').textContent = data.storeTagline;
+        if (data.primaryColor) {
+          document.documentElement.style.setProperty('--primary', data.primaryColor);
+        }
+      } catch (e) {}
+
+      if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

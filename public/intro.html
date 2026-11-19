@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intro - Pedidos por WhatsApp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 1280px;
+      height: 720px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 40%, #1e293b 0%, #0f172a 60%, #020617 100%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+
+    .brand-glow {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.22) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      filter: blur(60px);
+      pointer-events: none;
+    }
+
+    .badge-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(249, 115, 22, 0.15);
+      border: 1px solid rgba(249, 115, 22, 0.4);
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fb923c;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+      z-index: 10;
+    }
+
+    .title {
+      font-size: 3.8rem;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 18px;
+      z-index: 10;
+    }
+
+    .title span {
+      background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 1.35rem;
+      color: #94a3b8;
+      max-width: 780px;
+      line-height: 1.5;
+      margin-bottom: 36px;
+      z-index: 10;
+    }
+
+    .features-row {
+      display: flex;
+      gap: 20px;
+      z-index: 10;
+    }
+
+    .feat-card {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 14px 22px;
+      border-radius: 14px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .feat-card span.icon { font-size: 1.25rem; }
+  </style>
+</head>
+<body>
+  <div class="brand-glow"></div>
+
+  <div class="badge-chip">
+    <span>🏗️ SOFTWARE ESPECIALIZADO PARA CORRALONES Y FERRETERÍAS</span>
+  </div>
+
+  <h1 class="title">
+    Pedidos por <span>WhatsApp</span>
+  </h1>
+
+  <p class="subtitle">
+    El catálogo digital que multiplica tus ventas, automatiza la toma de pedidos y coordina tus despachos en tiempo real.
+  </p>
+
+  <div class="features-row">
+    <div class="feat-card">
+      <span class="icon">📱</span>
+      <span>Catálogo Móvil con Fotos Reales</span>
+    </div>
+    <div class="feat-card">
+      <span class="icon">💬</span>
+      <span>Checkout Directo a WhatsApp</span>
+    </div>
+    <div class="feat-card">
+      <span class="icon">🔔</span>
+      <span>Panel en Vivo con Descuento de Stock</span>
+    </div>
+    <div class="feat-card">
+      <span class="icon">📄</span>
+      <span>Remitos A4 de Preparación</span>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: pedidos-whatsapp-demo
+    runtime: node
+    plan: starter
+    region: oregon
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/config
+    disk:
+      name: datos
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_PATH
+        value: /data/pedidos.db
+      - key: UPLOADS_DIR
+        value: /data/uploads
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: WHATSAPP_PHONE
+        sync: false
+      - key: STORE_NAME
+        value: Corralón & Distribuidora Norte
+      - key: STORE_TAGLINE
+        value: Materiales de Construcción • Venta Mayorista y Minorista

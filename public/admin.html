@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración - Corralón</title>
+  
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#f97316">
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Estilos específicos del panel de métricas */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .metric-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-xs);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .metric-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .metric-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .metric-val {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--secondary);
+      letter-spacing: -0.5px;
+    }
+    .metric-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .top-products-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .top-products-table th, .top-products-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .top-products-table th {
+      background: #f8fafc;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-align: left;
+    }
+  </style>
+</head>
+<body style="padding-bottom: 40px;">
+
+  <!-- Banner de demostración -->
+  <div class="demo-banner">
+    <span class="with-icon"><i data-lucide="alert-triangle" class="icon-sm"></i> <strong>DEMO CON DATOS DE EJEMPLO</strong> — Panel de administración para corralones y distribuidoras.</span>
+  </div>
+
+  <!-- Vista de Login (si no está autenticado) -->
+  <div id="loginView" style="display: none; min-height: 80vh; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 28px; width: 100%; max-width: 420px; box-shadow: var(--shadow-lg);">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="width: 64px; height: 64px; border-radius: var(--radius-md); background: var(--primary-light); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; border: 1px solid var(--primary-border);">
+          <i data-lucide="lock" class="icon-xl" style="width: 32px; height: 32px;"></i>
+        </div>
+        <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--secondary);">Panel de Control</h2>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">Ingresá la contraseña de administrador</p>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label" for="adminPasswordInput">Contraseña de acceso</label>
+          <input 
+            type="password" 
+            id="adminPasswordInput" 
+            class="form-input" 
+            placeholder="Clave (por defecto: admin123)" 
+            required 
+            autofocus
+          >
+        </div>
+
+        <div id="loginError" style="display: none; color: var(--danger); font-size: 0.85rem; margin-bottom: 12px; font-weight: 600;"></div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">
+          Ingresar al Panel
+        </button>
+      </form>
+      
+      <div style="text-align: center; margin-top: 20px;">
+        <a href="/" style="font-size: 0.85rem; color: var(--text-muted); text-decoration: none;">← Volver al catálogo</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista Principal del Panel (cuando está autenticado) -->
+  <div id="dashboardView" style="display: none;">
+    
+    <!-- Header Admin -->
+    <header class="store-header">
+      <div class="container store-header-inner">
+        <div class="brand-box">
+          <div class="brand-logo" id="adminLogoContainer">
+            <i data-lucide="settings" class="icon-lg"></i>
+          </div>
+          <div class="brand-info">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <h1 id="adminStoreName">Corralón & Distribuidora</h1>
+              <span class="live-indicator" id="liveIndicator" title="Conexión en vivo activa">
+                <span class="live-dot"></span>
+                <span>En vivo</span>
+              </span>
+            </div>
+            <p>Panel de Administración y Gestión de Pedidos</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <a href="/video-demo.html" target="_blank" class="btn btn-outline btn-sm with-icon" style="color: var(--primary); border-color: var(--primary);" title="Ver y descargar video comercial del sistema">
+            <i data-lucide="video" class="icon-sm"></i>
+            <span>Video Demo</span>
+          </a>
+          <a href="/qr" target="_blank" class="btn btn-outline btn-sm with-icon" title="Ver cartel QR de mostrador">
+            <i data-lucide="qr-code" class="icon-sm"></i>
+            <span>Cartel QR</span>
+          </a>
+          <a href="/" target="_blank" class="btn btn-outline btn-sm with-icon">
+            <i data-lucide="external-link" class="icon-sm"></i>
+            <span>Ver Catálogo</span>
+          </a>
+          <button type="button" id="btnLogout" class="btn btn-outline btn-sm with-icon" title="Cerrar sesión">
+            <i data-lucide="log-out" class="icon-sm"></i>
+            <span>Salir</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      
+      <!-- Navegación entre Pestañas -->
+      <nav class="admin-nav" role="tablist">
+        <button type="button" class="admin-nav-item active with-icon" id="tabBtnOrders" data-tab="orders" role="tab">
+          <i data-lucide="clipboard-list" class="icon-sm"></i>
+          <span>Pedidos Recibidos (<span id="ordersCountBadge">0</span>)</span>
+        </button>
+        <button type="button" class="admin-nav-item with-icon" id="tabBtnMetrics" data-tab="metrics" role="tab">
+          <i data-lucide="bar-chart-3" class="icon-sm"></i>
+          <span>Resumen del Día & Métricas</span>
+        </button>
+        <button type="button" class="admin-nav-item with-icon" id="tabBtnProducts" data-tab="products" role="tab">
+          <i data-lucide="package" class="icon-sm"></i>
+          <span>Catálogo de Materiales (<span id="productsCountBadge">0</span>)</span>
+        </button>
+      </nav>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- PESTAÑA 1: PEDIDOS -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="tabOrders">
+        
+        <!-- Barra de Filtros (Estado, Fecha y Exportación CSV) -->
+        <div class="admin-filter-bar">
+          <div class="filter-group">
+            <button class="cat-pill active filter-status-btn" data-status="Todos">Todos</button>
+            <button class="cat-pill filter-status-btn" data-status="Nuevo">Nuevos</button>
+            <button class="cat-pill filter-status-btn" data-status="Preparando">Preparando</button>
+            <button class="cat-pill filter-status-btn" data-status="Listo">Listos</button>
+            <button class="cat-pill filter-status-btn" data-status="Entregado">Entregados</button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <label for="adminDateFilter" style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">Período:</label>
+            <select id="adminDateFilter" class="form-select" style="padding: 6px 12px; font-size: 0.85rem; width: auto; height: 36px;">
+              <option value="all">Todas las fechas</option>
+              <option value="today">Hoy</option>
+              <option value="week">Últimos 7 días</option>
+              <option value="month">Últimos 30 días</option>
+            </select>
+            <button type="button" class="btn btn-outline btn-sm with-icon" id="btnExportCsv" title="Descargar reporte en formato Excel / CSV">
+              <i data-lucide="download" class="icon-sm"></i>
+              <span>Exportar CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="ordersLoading" style="text-align: center; padding: 40px 0; color: var(--text-muted);">
+          <p>Cargando lista de pedidos...</p>
+        </div>
+
+        <div id="ordersList">
+          <!-- Renderizado dinámicamente con admin.js -->
+        </div>
+
+        <div id="noOrdersMessage" style="display: none; text-align: center; padding: 50px 20px; background: white; border: 1px dashed var(--border); border-radius: var(--radius-lg);">
+          <i data-lucide="inbox" class="icon-xl" style="width: 48px; height: 48px; color: var(--text-subtle); display: block; margin: 0 auto 12px;"></i>
+          <h3 style="font-weight: 800; font-size: 1.15rem; color: var(--secondary);">No hay pedidos en este filtro</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">Cuando los clientes confirmen pedidos, los verás acá reflejados.</p>
+        </div>
+
+      </section>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- PESTAÑA 2: MÉTRICAS Y RESUMEN DEL DÍA -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="tabMetrics" style="display: none;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--secondary);">Resumen de Rendimiento Comercial</h2>
+          <div style="display: flex; gap: 8px;">
+            <button class="cat-pill active metrics-range-btn" data-range="today">Hoy</button>
+            <button class="cat-pill metrics-range-btn" data-range="week">Últimos 7 días</button>
+            <button class="cat-pill metrics-range-btn" data-range="month">Últimos 30 días</button>
+          </div>
+        </div>
+
+        <!-- Tarjetas KPI -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-card-header">
+              <span class="metric-label">Total Facturado</span>
+              <i data-lucide="banknote" class="icon" style="color: var(--success);"></i>
+            </div>
+            <div class="metric-val" id="metricTotalRevenue" style="color: var(--success);">$ 0</div>
+            <span class="metric-sub">Excluye pedidos cancelados</span>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-card-header">
+              <span class="metric-label">Cantidad de Pedidos</span>
+              <i data-lucide="clipboard-list" class="icon" style="color: var(--secondary);"></i>
+            </div>
+            <div class="metric-val" id="metricTotalOrders">0</div>
+            <span class="metric-sub" id="metricOrdersSub">En el período seleccionado</span>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-card-header">
+              <span class="metric-label">Ticket Promedio</span>
+              <i data-lucide="receipt" class="icon" style="color: var(--primary);"></i>
+            </div>
+            <div class="metric-val" id="metricAvgTicket">$ 0</div>
+            <span class="metric-sub">Promedio por pedido confirmado</span>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-card-header">
+              <span class="metric-label">Pedidos en Proceso</span>
+              <i data-lucide="clock" class="icon" style="color: var(--warning);"></i>
+            </div>
+            <div class="metric-val" id="metricActiveOrders" style="color: var(--primary);">0</div>
+            <span class="metric-sub">Nuevos y en preparación</span>
+          </div>
+        </div>
+
+        <!-- Desglose por estados y Top Productos -->
+        <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+          
+          <div style="background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px;">
+            <h3 style="font-size: 1rem; font-weight: 800; margin-bottom: 14px; color: var(--secondary); display: flex; align-items: center; gap: 8px;">
+              <i data-lucide="trophy" class="icon-sm" style="color: #eab308;"></i>
+              <span>Los 5 Materiales Más Pedidos</span>
+            </h3>
+            <div class="admin-table-container">
+              <table class="top-products-table">
+                <thead>
+                  <tr>
+                    <th>Material</th>
+                    <th style="text-align: center;">Cantidad Total</th>
+                    <th style="text-align: right;">Total Facturado</th>
+                  </tr>
+                </thead>
+                <tbody id="topProductsTableBody">
+                  <!-- Rellenado por admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- PESTAÑA 3: PRODUCTOS -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="tabProducts" style="display: none;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 220px;">
+            <input 
+              type="text" 
+              id="adminProductSearch" 
+              class="form-input" 
+              placeholder="Buscar material o rubro..."
+            >
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-outline with-icon" id="btnOpenImportCSV">
+              <i data-lucide="upload" class="icon-sm"></i>
+              <span>Importar CSV</span>
+            </button>
+            <button type="button" class="btn btn-primary with-icon" id="btnOpenCreateProduct">
+              <i data-lucide="plus" class="icon-sm"></i>
+              <span>Nuevo Material</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width: 52px; text-align: center;">Foto</th>
+                <th>Material</th>
+                <th>Rubro</th>
+                <th>Unidad</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th style="text-align: center;">Sin Stock</th>
+                <th style="text-align: center;">Activo</th>
+                <th style="text-align: right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody">
+              <!-- Renderizado dinámicamente con admin.js -->
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+    </div>
+  </div>
+
+  <!-- --------------------------------------------------------------- -->
+  <!-- DRAWER LATERAL: DETALLE DEL PEDIDO (SLIDE-OVER)                  -->
+  <!-- --------------------------------------------------------------- -->
+  <div class="drawer-backdrop" id="orderDrawerBackdrop">
+    <div class="drawer-panel" id="orderDrawerPanel" role="dialog" aria-modal="true" aria-label="Detalle del Pedido">
+      <div class="sheet-drag-handle"></div>
+      <div class="drawer-header">
+        <h2 class="drawer-title" id="orderDetailTitle">Detalle del Pedido</h2>
+        <button class="btn-close-drawer" id="btnCloseOrderDetail">&times;</button>
+      </div>
+      <div class="drawer-body" id="orderDetailBody">
+        <!-- Renderizado dinámicamente con admin.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- --------------------------------------------------------------- -->
+  <!-- MODAL: NOTIFICAR AL CLIENTE POR WHATSAPP                       -->
+  <!-- --------------------------------------------------------------- -->
+  <div class="modal-overlay" id="whatsappNotifyModal" role="dialog" aria-modal="true" aria-label="Notificar al cliente">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <i data-lucide="message-circle" class="icon"></i>
+          <span>Avisar al Cliente por WhatsApp</span>
+        </h2>
+        <button class="btn-close" id="btnCloseNotifyModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px;">
+          Podés personalizar el mensaje antes de abrir WhatsApp:
+        </p>
+        <div class="form-group">
+          <label class="form-label" for="notifyMessageText">Mensaje prearmado:</label>
+          <textarea id="notifyMessageText" class="form-textarea" rows="4"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="btn btn-outline" id="btnCancelNotify">Omitir</button>
+        <button type="button" class="btn btn-primary with-icon" id="btnSendNotifyWhatsApp" style="background: #25d366;">
+          <i data-lucide="message-circle" class="icon"></i>
+          <span>Abrir WhatsApp y Enviar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- --------------------------------------------------------------- -->
+  <!-- MODAL: CREAR / EDITAR PRODUCTO                                  -->
+  <!-- --------------------------------------------------------------- -->
+  <div class="modal-overlay" id="productModal" role="dialog" aria-modal="true" aria-label="Material">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="productModalTitle">Nuevo Material</h2>
+        <button class="btn-close" id="btnCloseProductModal">&times;</button>
+      </div>
+      <form id="productForm">
+        <div class="modal-body">
+          <input type="hidden" id="editProductId" value="">
+
+          <div class="form-group">
+            <label class="form-label" for="prodName">Nombre del Material *</label>
+            <input type="text" id="prodName" class="form-input" placeholder="Ej: Cemento Loma Negra 50 kg" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label class="form-label" for="prodCategory">Categoría / Rubro *</label>
+              <input type="text" id="prodCategory" class="form-input" placeholder="Ej: Cemento y Cal" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="prodUnit">Unidad de medida *</label>
+              <select id="prodUnit" class="form-select">
+                <option value="bolsa">Bolsa</option>
+                <option value="m3">Metro cúbico (m3)</option>
+                <option value="unidad">Unidad</option>
+                <option value="kg">Kilogramo (kg)</option>
+                <option value="barra">Barra</option>
+                <option value="m2">Metro cuadrado (m2)</option>
+                <option value="litro">Litro</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label class="form-label" for="prodPrice">Precio ($ ARS) *</label>
+              <input type="number" id="prodPrice" class="form-input" placeholder="Ej: 9800" min="0" step="1" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="prodStock">Stock actual</label>
+              <input type="number" id="prodStock" class="form-input" placeholder="Ej: 100" min="0" value="100">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label class="form-label" for="prodMinStock">Umbral de Stock Bajo</label>
+              <input type="number" id="prodMinStock" class="form-input" placeholder="Ej: 15" min="0" value="10">
+            </div>
+            <div class="form-group" style="display: flex; align-items: flex-end; padding-bottom: 8px;">
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer;">
+                <input type="checkbox" id="prodIsFeatured" style="width: 18px; height: 18px;">
+                <span class="with-icon"><i data-lucide="star" class="icon-sm" style="color: #eab308; fill: #eab308;"></i> <span>Destacado en inicio</span></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Subida de Imagen de Producto -->
+          <div class="form-group">
+            <label class="form-label" for="prodImageFile">Foto del producto (subir archivo o ingresar URL)</label>
+            <input type="file" id="prodImageFile" accept="image/jpeg,image/png,image/webp" class="form-input" style="padding: 6px;">
+            <input type="url" id="prodImageUrl" class="form-input" placeholder="O ingresá URL: https://.../foto.jpg" style="margin-top: 6px;">
+            <div id="prodImagePreviewBox" style="display: none; margin-top: 8px; width: 80px; height: 60px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border);">
+              <img id="prodImagePreview" src="" alt="Vista previa" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+          </div>
+
+          <div style="margin-top: 14px; display: flex; gap: 24px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+              <input type="checkbox" id="prodIsOutOfStock" style="width: 18px; height: 18px;">
+              <span>Marcar <strong>Sin Stock</strong></span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+              <input type="checkbox" id="prodIsActive" style="width: 18px; height: 18px;" checked>
+              <span>Producto Activo (visible)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px;">
+          <button type="button" class="btn btn-outline" id="btnCancelProductModal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnSaveProduct">Guardar Material</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- --------------------------------------------------------------- -->
+  <!-- MODAL: IMPORTAR CSV                                             -->
+  <!-- --------------------------------------------------------------- -->
+  <div class="modal-overlay" id="csvImportModal" role="dialog" aria-modal="true" aria-label="Importar CSV">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Importar Materiales desde CSV</h2>
+        <button class="btn-close" id="btnCloseCsvModal">&times;</button>
+      </div>
+      <form id="csvImportForm">
+        <div class="modal-body">
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 16px; font-size: 0.85rem; line-height: 1.4;">
+            <p><strong>Formato requerido de columnas:</strong></p>
+            <code style="display: block; background: #e2e8f0; padding: 6px; border-radius: 4px; margin: 6px 0;">
+              nombre,categoria,unidad,precio,stock
+            </code>
+            <p style="color: var(--text-muted); font-size: 0.8rem;">
+              Compatible con archivos de Excel en español (acepta coma o punto y coma como delimitador).
+            </p>
+            <button type="button" class="btn btn-outline btn-sm with-icon" id="btnDownloadCsvTemplate" style="margin-top: 8px;">
+              <i data-lucide="download" class="icon-sm"></i>
+              <span>Descargar plantilla de ejemplo (.csv)</span>
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Seleccionar archivo .csv</label>
+            <input type="file" id="csvFileInput" accept=".csv,text/csv,text/plain" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">O pegá el contenido CSV acá:</label>
+            <textarea id="csvTextInput" class="form-textarea" rows="4" placeholder="nombre,categoria,unidad,precio,stock&#10;Cemento Loma Negra,Cemento y Cal,bolsa,9800,100"></textarea>
+          </div>
+
+          <div id="csvStatusMessage" style="display: none; padding: 10px; border-radius: var(--radius-sm); font-size: 0.85rem; margin-top: 10px;"></div>
+        </div>
+
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px;">
+          <button type="button" class="btn btn-outline" id="btnCancelCsvModal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitCsv">Importar Catálogo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toastMessage">
+    <span id="toastIcon"><i data-lucide="bell" class="icon"></i></span>
+    <span id="toastText">Operación exitosa</span>
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

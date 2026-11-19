@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transición - Panel de Control</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 1280px;
+      height: 720px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 60%, #020617 100%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+
+    .brand-glow {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.22) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      filter: blur(60px);
+      pointer-events: none;
+    }
+
+    .badge-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      padding: 8px 22px;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+      z-index: 10;
+    }
+
+    .title {
+      font-size: 3.5rem;
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 18px;
+      z-index: 10;
+    }
+
+    .title span {
+      background: linear-gradient(135deg, #60a5fa 0%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 1.3rem;
+      color: #94a3b8;
+      max-width: 720px;
+      line-height: 1.5;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div class="brand-glow"></div>
+
+  <div class="badge-chip">
+    <span>🔔 GESTIÓN EN TIEMPO REAL</span>
+  </div>
+
+  <h1 class="title">
+    Panel de Control para <span>el Corralón</span>
+  </h1>
+
+  <p class="subtitle">
+    El pedido ingresa al instante al panel del depósito. Control de stock automático, aviso al cliente y remitos de carga A4 en 1 click.
+  </p>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pedidos por WhatsApp - Catálogo</title>
+  
+  <!-- PWA & Mobile Meta -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#f97316">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="/icons/icon.svg">
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Banner de demostración -->
+  <div class="demo-banner">
+    <span class="with-icon"><i data-lucide="alert-triangle" class="icon-sm"></i> <strong>DEMO CON DATOS DE EJEMPLO</strong> — Catálogo y pedidos por WhatsApp para corralones y distribuidoras.</span>
+  </div>
+
+  <!-- Encabezado del negocio -->
+  <header class="store-header">
+    <div class="container store-header-inner">
+      <div class="brand-box">
+        <div class="brand-logo" id="storeLogoContainer" aria-label="Logo del negocio">
+          <span id="storeLogoIcon"><i data-lucide="building-2" class="icon-lg"></i></span>
+        </div>
+        <div class="brand-info">
+          <div class="brand-title-row">
+            <h1 id="storeNameText">Corralón & Distribuidora</h1>
+            <span class="status-pill open" id="storeStatusPill">
+              <span class="status-dot"></span>
+              <span id="storeStatusText">Abierto</span>
+            </span>
+          </div>
+          <p id="storeTaglineText">Materiales de Construcción • Venta Mayorista y Minorista</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" id="btnOpenRepeatOrder" class="btn btn-outline btn-sm with-icon" title="Repetir un pedido anterior">
+          <i data-lucide="rotate-ccw" class="icon-sm"></i>
+          <span>Repetir pedido</span>
+        </button>
+        <a href="/qr" target="_blank" class="btn btn-outline btn-sm with-icon" title="Imprimir cartel QR para mostrador">
+          <i data-lucide="qr-code" class="icon-sm"></i>
+          <span>QR</span>
+        </a>
+        <a href="/admin" class="btn btn-outline btn-sm with-icon" title="Panel del Corralón">
+          <i data-lucide="settings" class="icon-sm"></i>
+          <span>Panel</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="container">
+    
+    <!-- Hero Banner del Corralón -->
+    <section class="hero-banner" aria-label="Bienvenida al corralón">
+      <div class="hero-content">
+        <span class="hero-badge with-icon">
+          <i data-lucide="check-circle-2" class="icon-sm"></i>
+          <span>Venta Mayorista y Minorista</span>
+        </span>
+        <h2 class="hero-title" id="heroTitle">Materiales de Construcción para tu Obra</h2>
+        <p class="hero-subtitle" id="heroSubtitle">Armá tu lista de materiales online y recibila en obra o retirala por mostrador. Envíos programados por WhatsApp.</p>
+        <div class="hero-features">
+          <div class="hero-feature with-icon">
+            <i data-lucide="truck" class="icon-sm"></i>
+            <span>Envíos directos a obra</span>
+          </div>
+          <div class="hero-feature with-icon">
+            <i data-lucide="store" class="icon-sm"></i>
+            <span>Retiro en mostrador</span>
+          </div>
+          <div class="hero-feature with-icon">
+            <i data-lucide="message-circle" class="icon-sm"></i>
+            <span>Cotización inmediata</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-image-box">
+        <img src="/img/hero/hero-corralon.webp" alt="Corralón de Materiales de Construcción" class="hero-image" loading="lazy">
+      </div>
+    </section>
+
+    <!-- Buscador y Filtro por Categorías -->
+    <section class="search-filter-section">
+      <div class="search-box">
+        <span class="search-icon"><i data-lucide="search" class="icon-sm"></i></span>
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="Buscar cemento, arena, ladrillos, hierros..." 
+          autocomplete="off"
+          aria-label="Buscar materiales en el catálogo"
+        >
+        <button type="button" id="searchClearBtn" class="search-clear-btn" aria-label="Limpiar búsqueda">&times;</button>
+      </div>
+
+      <!-- Sección de Materiales Destacados y Más Pedidos -->
+      <section class="featured-section" id="featuredSection" style="display: none;">
+        <div class="section-subtitle">
+          <i data-lucide="star" class="icon-sm" style="color: #eab308; fill: #eab308;"></i>
+          <span>Materiales Más Pedidos</span>
+        </div>
+        <div class="featured-slider" id="featuredSlider">
+          <!-- Renderizado dinámicamente con app.js -->
+        </div>
+      </section>
+
+      <div class="categories-slider" id="categoriesSlider" role="tablist" aria-label="Categorías de materiales">
+        <button class="cat-pill active" data-category="ALL" role="tab" aria-selected="true">
+          Todos los materiales
+        </button>
+      </div>
+    </section>
+
+    <!-- Catálogo de productos -->
+    <section aria-label="Catálogo de productos">
+      
+      <!-- Skeletons durante la carga -->
+      <div id="loadingSkeletons" class="products-grid">
+        <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-price"></div><div class="skeleton skeleton-actions"></div></div>
+        <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-price"></div><div class="skeleton skeleton-actions"></div></div>
+        <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-price"></div><div class="skeleton skeleton-actions"></div></div>
+        <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-price"></div><div class="skeleton skeleton-actions"></div></div>
+        <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-price"></div><div class="skeleton skeleton-actions"></div></div>
+        <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-price"></div><div class="skeleton skeleton-actions"></div></div>
+      </div>
+
+      <div class="products-grid" id="productsGrid" style="display: none;">
+        <!-- Se rellena dinámicamente con app.js -->
+      </div>
+
+      <div id="noProductsFound" style="display: none; text-align: center; padding: 60px 20px; background: white; border: 1px dashed var(--border); border-radius: var(--radius-lg); margin-top: 10px;">
+        <i data-lucide="search" class="icon-xl" style="width: 48px; height: 48px; color: var(--text-subtle); display: block; margin: 0 auto 12px;"></i>
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--secondary);">No encontramos materiales con ese nombre</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 4px;">Probá buscando otra palabra o limpiando los filtros de categoría.</p>
+        <button type="button" class="btn btn-outline btn-sm with-icon" id="btnResetFilters" style="margin-top: 14px;">
+          <i data-lucide="package" class="icon-sm"></i>
+          <span>Ver todos los materiales</span>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Barra flotante del carrito (Mobile First) -->
+  <aside class="cart-floating-bar" id="cartFloatingBar" aria-label="Resumen del pedido">
+    <div class="cart-bar-info">
+      <span class="cart-bar-count" id="cartFloatingCount">0 materiales</span>
+      <span class="cart-bar-total" id="cartFloatingTotal">$ 0</span>
+    </div>
+    <button class="btn-view-cart with-icon" id="btnOpenCart" aria-label="Abrir pedido">
+      <span>Ver Pedido</span>
+      <i data-lucide="shopping-cart" class="icon"></i>
+    </button>
+  </aside>
+
+  <!-- Drawer / Bottom Sheet Deslizable (Bottom Sheet en celular, Slide-Over en escritorio) -->
+  <div class="drawer-backdrop" id="cartDrawerBackdrop">
+    <div class="drawer-panel" id="cartDrawerPanel" role="dialog" aria-modal="true" aria-label="Mi Pedido">
+      
+      <div class="sheet-drag-handle"></div>
+
+      <!-- Vista normal del carrito -->
+      <div id="cartView" style="display: flex; flex-direction: column; height: 100%;">
+        <div class="drawer-header">
+          <h2 class="drawer-title" style="display: flex; align-items: center; gap: 8px;">
+            <span>Mi Pedido</span>
+            <i data-lucide="shopping-cart" class="icon"></i>
+          </h2>
+          <button class="btn-close-drawer" id="btnCloseCart" aria-label="Cerrar pedido">&times;</button>
+        </div>
+        
+        <div class="drawer-body">
+          <!-- Lista de ítems en el carrito -->
+          <div class="cart-items-list" id="cartItemsList">
+            <!-- Rellenado por app.js -->
+          </div>
+
+          <!-- Total parcial y desglose de flete -->
+          <div class="checkout-summary">
+            <div class="summary-row">
+              <span>Subtotal materiales:</span>
+              <span id="cartModalSubtotal">$ 0</span>
+            </div>
+            <div class="summary-row" id="cartShippingRow" style="display: none;">
+              <span>Flete / Envío:</span>
+              <span id="cartModalShipping">$ 0</span>
+            </div>
+            <div class="summary-row total-row">
+              <span>Total general:</span>
+              <span id="cartModalTotal">$ 0</span>
+            </div>
+          </div>
+
+          <!-- Alerta de monto mínimo -->
+          <div id="minOrderAlert" class="min-order-alert" style="display: none;">
+            <i data-lucide="alert-triangle" class="icon" style="color: #b45309;"></i>
+            <span id="minOrderAlertText">El pedido mínimo para envíos es de $ 15.000.</span>
+          </div>
+
+          <!-- Formulario de datos del cliente -->
+          <h3 class="checkout-section-title" style="display: flex; align-items: center; gap: 6px;">
+            <i data-lucide="map-pin" class="icon"></i>
+            <span>Datos para la entrega</span>
+          </h3>
+          
+          <div class="form-group">
+            <label class="form-label" for="customerName">Nombre y Apellido *</label>
+            <input type="text" id="customerName" class="form-input" placeholder="Ej: Juan Pérez" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="customerPhone">Teléfono de contacto / WhatsApp *</label>
+            <input type="tel" id="customerPhone" class="form-input" placeholder="Ej: 11 2345-6789" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Forma de entrega *</label>
+            <div class="segmented-control" role="radiogroup" aria-label="Forma de entrega">
+              <button type="button" class="segmented-btn active with-icon" id="btnDeliveryPickup" data-type="retiro">
+                <i data-lucide="store" class="icon-sm"></i>
+                <span>Retiro en local</span>
+              </button>
+              <button type="button" class="segmented-btn with-icon" id="btnDeliveryShipping" data-type="envio">
+                <i data-lucide="truck" class="icon-sm"></i>
+                <span>Envío a domicilio</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group" id="deliveryAddressGroup" style="display: none;">
+            <div class="form-group">
+              <label class="form-label" for="shippingZoneSelect">Zona de flete / entrega *</label>
+              <select id="shippingZoneSelect" class="form-select">
+                <!-- Opciones dinámicas según config -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="deliveryAddress">Dirección de entrega (calle, altura, entrecalles) *</label>
+              <input type="text" id="deliveryAddress" class="form-input" placeholder="Ej: Av. San Martín 1540 (e/ Mitre y Belgrano)">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="orderNotes">Aclaraciones u observaciones de descarga (opcional)</label>
+            <textarea id="orderNotes" class="form-textarea" rows="2" placeholder="Ej: Descargar en vereda con pluma, llamar antes de salir, etc."></textarea>
+          </div>
+
+          <!-- Botón de envío -->
+          <div style="margin-top: 18px;">
+            <button type="button" class="btn-whatsapp-submit with-icon" id="btnSubmitOrder" style="justify-content: center;">
+              <i data-lucide="message-circle" class="icon"></i>
+              <span>Enviar Pedido por WhatsApp</span>
+            </button>
+            <p style="font-size: 0.76rem; text-align: center; color: var(--text-muted); margin-top: 10px;">
+              El pedido queda registrado en el corralón y se abre WhatsApp con el mensaje armado.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Vista de éxito post-envío -->
+      <div id="successView" style="display: none; flex-direction: column; height: 100%;">
+        <div class="drawer-header">
+          <h2 class="drawer-title">¡Pedido Registrado!</h2>
+          <button class="btn-close-drawer" id="btnCloseSuccess">&times;</button>
+        </div>
+        <div class="drawer-body">
+          <div class="success-screen">
+            <div class="success-icon" style="display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="check-circle-2" class="icon-xl" style="width: 48px; height: 48px; color: var(--success);"></i>
+            </div>
+            <h3>¡Muchas gracias!</h3>
+            <p class="success-order-num" id="successOrderNumber">Pedido #1001</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px;">
+              Tu pedido quedó registrado en el sistema del corralón. Si WhatsApp no se abrió automáticamente, hacé click abajo:
+            </p>
+            
+            <a href="#" id="btnReopenWhatsApp" target="_blank" class="btn-whatsapp-submit with-icon" style="text-decoration: none; margin-bottom: 14px; justify-content: center;">
+              <i data-lucide="message-circle" class="icon"></i>
+              <span>Abrir WhatsApp ahora</span>
+            </a>
+
+            <button type="button" class="btn btn-outline" id="btnNewOrder" style="width: 100%;">
+              Hacer otro pedido
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal: Repetir Pedido Anterior -->
+  <div class="modal-overlay" id="repeatOrderModal" role="dialog" aria-modal="true" aria-label="Repetir pedido">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <i data-lucide="rotate-ccw" class="icon"></i>
+          <span>Repetir Pedido Anterior</span>
+        </h2>
+        <button class="btn-close" id="btnCloseRepeatOrder">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 14px;">
+          Ingresá tu número de teléfono para ver tus pedidos anteriores y volver a cargarlos en el carrito con 1 solo click.
+        </p>
+
+        <form id="repeatOrderForm" style="display: flex; gap: 8px; margin-bottom: 16px;">
+          <input 
+            type="tel" 
+            id="repeatOrderPhone" 
+            class="form-input" 
+            placeholder="Tu teléfono (ej: 11 2345-6789)" 
+            required 
+            style="flex: 1;"
+          >
+          <button type="submit" class="btn btn-primary with-icon" id="btnSearchOrders">
+            <i data-lucide="search" class="icon-sm"></i>
+            <span>Buscar</span>
+          </button>
+        </form>
+
+        <div id="repeatOrderNotice" style="display: none; background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: var(--radius-sm); padding: 12px; font-size: 0.85rem; color: #1e40af; margin-bottom: 14px; line-height: 1.4;">
+        </div>
+
+        <div id="repeatOrderLoading" style="display: none; text-align: center; padding: 24px; color: var(--text-muted);">
+          Buscando tus pedidos anteriores...
+        </div>
+
+        <div id="repeatOrderResults">
+          <!-- Rellenado por app.js -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Detalle de Producto Ampliado -->
+  <div class="modal-overlay" id="productDetailModal" role="dialog" aria-modal="true" aria-label="Detalle del material">
+    <div class="modal-content product-detail-modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalDetailTitle">Detalle del Material</h2>
+        <button class="btn-close" id="btnCloseProductDetail">&times;</button>
+      </div>
+      <div class="modal-body" id="modalDetailBody">
+        <!-- Renderizado dinámicamente con app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast de aviso accesible -->
+  <div class="toast" id="toastMessage" role="status" aria-live="polite">
+    <span id="toastIcon"><i data-lucide="shopping-cart" class="icon"></i></span>
+    <span id="toastText">Material agregado al pedido</span>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

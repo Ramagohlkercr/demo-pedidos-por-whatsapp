@@ -1,0 +1,5 @@
+node_modules/
+.env
+pedidos.db*
+.DS_Store
+public/uploads/

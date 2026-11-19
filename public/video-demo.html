@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Comercial del Sistema — Pedidos por WhatsApp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #090d16;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #f1f5f9;
+      min-height: 100vh;
+      padding: 30px 20px 80px;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .badge-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(249, 115, 22, 0.15);
+      border: 1px solid rgba(249, 115, 22, 0.4);
+      color: #fb923c;
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #f97316;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #f97316;
+    }
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+    .header h1 span {
+      background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header p {
+      color: #94a3b8;
+      font-size: 1.05rem;
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    /* Tabs para alternar video */
+    .tabs-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.25s ease;
+    }
+    .tab-btn:hover {
+      background: rgba(51, 65, 85, 0.8);
+      color: #ffffff;
+    }
+    .tab-btn.active {
+      background: #f97316;
+      border-color: #ea580c;
+      color: #ffffff;
+      box-shadow: 0 4px 20px rgba(249, 115, 22, 0.35);
+    }
+
+    /* Video Player Box */
+    .player-card {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      margin-bottom: 30px;
+    }
+
+    .video-viewport {
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+      max-height: 620px;
+      display: block;
+      border-radius: 12px;
+    }
+
+    .video-viewport.vertical-mode video {
+      max-width: 360px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+
+    /* Actions Bar */
+    .player-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .video-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .video-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .video-desc {
+      font-size: 0.88rem;
+      color: #94a3b8;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #22c55e;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.95rem;
+      padding: 12px 24px;
+      border-radius: 12px;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.35);
+      transition: all 0.2s ease;
+    }
+    .btn-download:hover {
+      background: #16a34a;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.45);
+    }
+
+    /* Sales Pitch Guide */
+    .pitch-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 28px;
+      margin-top: 36px;
+    }
+    .pitch-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .pitch-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .copy-box {
+      background: #0b1329;
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      border-radius: 12px;
+      padding: 18px 20px;
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: #e2e8f0;
+      line-height: 1.6;
+      position: relative;
+      margin-top: 14px;
+      white-space: pre-wrap;
+    }
+    .btn-copy {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(249, 115, 22, 0.2);
+      border: 1px solid #f97316;
+      color: #fb923c;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-copy:hover {
+      background: #f97316;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <div class="badge-top">
+        <div class="pulse-dot"></div>
+        <span>MATERIAL COMERCIAL LISTO PARA PROSPECTOS</span>
+      </div>
+      <h1>Demostración en Video del <span>Sistema</span></h1>
+      <p>Videos grabados en alta definición mostrando el flujo completo de compra del cliente y la gestión operativa del corralón.</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-wrapper">
+      <button class="tab-btn active" id="btnTab169" onclick="switchVideo('169')">
+        <i data-lucide="monitor" class="icon-sm"></i>
+        <span>Presentación Completa 16:9 (Ideal PC y Videollamadas)</span>
+      </button>
+      <button class="tab-btn" id="btnTab916" onclick="switchVideo('916')">
+        <i data-lucide="smartphone" class="icon-sm"></i>
+        <span>Versión Vertical 9:16 (Ideal para WhatsApp y Celular)</span>
+      </button>
+    </div>
+
+    <!-- Video Box -->
+    <div class="player-card">
+      <div class="video-viewport" id="videoContainer">
+        <video id="mainVideoPlayer" controls playsinline preload="auto" poster="/img/banner-corralon.webp">
+          <source id="videoSource" src="/videos/demo_pedidos_whatsapp.mp4" type="video/mp4">
+          Tu navegador no soporta reproducción de video HTML5.
+        </video>
+      </div>
+
+      <div class="player-actions">
+        <div class="video-meta">
+          <div class="video-title" id="videoTitleText">Pedidos por WhatsApp — Presentación Comercial (16:9)</div>
+          <div class="video-desc" id="videoDescText">Intro • Catálogo móvil con fotos • Carrito y Flete • Checkout WhatsApp • Panel en Vivo • Remito A4 • Métricas</div>
+        </div>
+
+        <a id="btnDownloadLink" href="/videos/demo_pedidos_whatsapp.mp4" download="demo_pedidos_whatsapp.mp4" class="btn-download">
+          <i data-lucide="download" class="icon"></i>
+          <span id="downloadBtnText">Descargar Video MP4 (16:9)</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Guía y Script de Mensaje para WhatsApp -->
+    <div class="pitch-card">
+      <div class="pitch-header">
+        <i data-lucide="message-square" style="color: #f97316; width: 28px; height: 28px;"></i>
+        <div>
+          <div class="pitch-title">Mensaje sugerido para enviar por WhatsApp al dueño del corralón</div>
+          <div style="font-size: 0.88rem; color: #94a3b8;">Copiá este texto y adjuntale el video `demo_mobile_cliente.mp4` directamente:</div>
+        </div>
+      </div>
+
+      <div class="copy-box" id="pitchMessageText">¡Hola [Nombre]! Te escribo porque desarrollamos un sistema de catálogo online y toma de pedidos directo por WhatsApp para corralones de materiales de construcción y distribuidoras.
+
+Te comparto este video de 1 minuto para que veas cómo funciona en la práctica:
+👉 Tu cliente o arquitecto arma la lista de materiales desde el celular con fotos y precios actualizados.
+👉 El sistema calcula automáticamente el costo del flete según la zona de obra.
+👉 Al confirmar, te envía el pedido armado y ordenado por WhatsApp con número correlativo único (#1033).
+👉 Y en tu computadora o depósito te salta el aviso en vivo para descontar stock y generar el remito A4 de carga con 1 click.
+
+Sin comisiones por venta y lo dejamos instalado con tu logo y tu lista de precios en 24 horas.
+
+¿Te interesaría que te muestre una demo en vivo de 5 minutos personalizada con el nombre de tu corralón?</div>
+
+      <button class="btn-copy" onclick="copyPitchMessage()">Copiar Mensaje</button>
+    </div>
+
+    <div style="text-align: center; margin-top: 36px;">
+      <a href="/" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
+        <i data-lucide="arrow-left" class="icon-sm"></i>
+        <span>Volver al Catálogo en Vivo</span>
+      </a>
+      <span style="color: #475569; margin: 0 10px;">•</span>
+      <a href="/admin" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
+        <i data-lucide="settings" class="icon-sm"></i>
+        <span>Ir al Panel de Administración</span>
+      </a>
+    </div>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    function switchVideo(type) {
+      const player = document.getElementById('mainVideoPlayer');
+      const source = document.getElementById('videoSource');
+      const container = document.getElementById('videoContainer');
+      const btn169 = document.getElementById('btnTab169');
+      const btn916 = document.getElementById('btnTab916');
+      const title = document.getElementById('videoTitleText');
+      const desc = document.getElementById('videoDescText');
+      const downloadBtn = document.getElementById('btnDownloadLink');
+      const downloadText = document.getElementById('downloadBtnText');
+
+      if (type === '916') {
+        btn916.classList.add('active');
+        btn169.classList.remove('active');
+        container.classList.add('vertical-mode');
+        source.src = '/videos/demo_mobile_cliente.mp4';
+        title.textContent = 'Pedidos por WhatsApp — Versión Celular (9:16)';
+        desc.textContent = 'Formato vertical ideal para enviar directamente por WhatsApp chat o subir a estados/reels.';
+        downloadBtn.href = '/videos/demo_mobile_cliente.mp4';
+        downloadBtn.download = 'demo_mobile_cliente.mp4';
+        downloadText.textContent = 'Descargar Video Vertical (9:16)';
+      } else {
+        btn169.classList.add('active');
+        btn916.classList.remove('active');
+        container.classList.remove('vertical-mode');
+        source.src = '/videos/demo_pedidos_whatsapp.mp4';
+        title.textContent = 'Pedidos por WhatsApp — Presentación Comercial (16:9)';
+        desc.textContent = 'Intro • Catálogo móvil con fotos • Carrito y Flete • Checkout WhatsApp • Panel en Vivo • Remito A4 • Métricas';
+        downloadBtn.href = '/videos/demo_pedidos_whatsapp.mp4';
+        downloadBtn.download = 'demo_pedidos_whatsapp.mp4';
+        downloadText.textContent = 'Descargar Video Widescreen (16:9)';
+      }
+
+      player.load();
+      player.play().catch(() => {});
+    }
+
+    function copyPitchMessage() {
+      const text = document.getElementById('pitchMessageText').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('¡Mensaje copiado al portapapeles!');
+      });
+    }
+  </script>
+</body>
+</html>
